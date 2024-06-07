@@ -4,7 +4,6 @@ from api.v1.views import app_views
 from flask import jsonify, abort, request
 from models import storage
 from models.state import State
-from werkzeug.exceptions import BadRequest
 
 
 @app_views.route('/states', strict_slashes=False)
@@ -63,7 +62,7 @@ def update_state(state_id):
         data = request.get_json()
         if not data:
             return "Not a JSON\n", 400
-    except BadRequest:
+    except Exception as e:
         return "Not a JSON\n", 400
     for key, value in data.items():
         if key not in ['id', 'created_at', 'updated_at']:
