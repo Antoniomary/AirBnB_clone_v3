@@ -18,7 +18,7 @@ def get_states(state_id=None):
             return jsonify(state.to_dict())
         abort(404)
     else:
-        states = [state.to_dict() for state in storage.all("State")]
+        states = [state.to_dict() for state in storage.all("State").values()]
         return jsonify(states)
 
 
@@ -40,9 +40,9 @@ def create_state():
     """Creates a State object in storage"""
     data = request.get_json()
     if not data:
-        return jsonify({"error": "Not a JSON"}), 400
+        return "Not a JSON", 400
     if 'name' not in data.keys():
-        return jsonify({"error": "Missing name"}), 400
+        return "Missing name", 400
     state = State(**data)
     state.save()
     return jsonify(state.to_dict()), 201
