@@ -43,7 +43,7 @@ def create_state():
         data = request.get_json()
         if not data:
             return "Not a JSON\n", 400
-    except BadRequest:
+    except Exception:
         return "Not a JSON\n", 400
     if 'name' not in data.keys():
         return "Missing name\n", 400
