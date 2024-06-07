@@ -45,8 +45,8 @@ def create_state():
             return "Not a JSON\n", 400
     except BadRequest:
         return "Not a JSON\n", 400
-    if 'name' not in data.keys():
-        return "Missing name\n", 400
+    # if 'name' not in data.keys():
+    #    return "Missing name\n", 400
     state = State(**data)
     state.save()
     return jsonify(state.to_dict()), 201
