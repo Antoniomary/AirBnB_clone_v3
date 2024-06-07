@@ -40,9 +40,9 @@ def create_state():
     """Creates a State object in storage"""
     data = request.get_json()
     if not data:
-        return "Not a JSON\n", 400
+        return jsonify({"error": "Not a JSON"}), 400
     if 'name' not in data.keys():
-        return "Missing name\n", 400
+        return jsonify({"error": "Missing name"}), 400
     state = State(**data)
     state.save()
     return jsonify(state.to_dict()), 201
