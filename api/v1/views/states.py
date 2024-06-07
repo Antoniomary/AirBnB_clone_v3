@@ -4,6 +4,7 @@ from api.v1.views import app_views
 from flask import jsonify, abort, request
 from models import storage
 from models.state import State
+from werkzeug.exceptions import BadRequest
 
 
 @app_views.route('/states', strict_slashes=False)
@@ -38,11 +39,14 @@ def delete_state(state_id):
                  methods=['POST'])
 def create_state():
     """Creates a State object in storage"""
-    data = request.get_json()
-    if not data:
-        return "Not a JSON", 400
+    try:
+        data = request.get_json()
+        if not data:
+            return "Not a JSON\n", 400
+    except BadRequest:
+        return "Not a JSON\n", 400
     if 'name' not in data.keys():
-        return "Missing name", 400
+        return "Missing name\n", 400
     state = State(**data)
     state.save()
     return jsonify(state.to_dict()), 201
@@ -55,8 +59,11 @@ def update_state(state_id):
     state = storage.get("State", state_id)
     if not state:
         abort(404)
-    data = request.get_json()
-    if not data:
+    try:
+        data = request.get_json()
+        if not data:
+            return "Not a JSON\n", 400
+    except BadRequest:
         return "Not a JSON\n", 400
     for key, value in data.items():
         if key not in ['id', 'created_at', 'updated_at']:
