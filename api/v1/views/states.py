@@ -8,13 +8,14 @@ from werkzeug.exceptions import BadRequest
 
 
 @app_views.route('/states', strict_slashes=False)
+def get_states():
     """Retrieves the list of all State objects in storage"""
     states = [state.to_dict() for state in storage.all("State").values()]
     return jsonify(states)
 
 
 @app_views.route('/states/<state_id>', strict_slashes=False)
-def get_states(state_id=None):
+def get_state(state_id=None):
     """Retrieves a State object or the list of all
        State objects in storage
     """
