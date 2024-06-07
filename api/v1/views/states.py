@@ -15,15 +15,12 @@ def get_states():
 
 
 @app_views.route('/states/<state_id>', strict_slashes=False)
-def get_state(state_id=None):
-    """Retrieves a State object or the list of all
-       State objects in storage
-    """
-    if state_id is not None:
-        state = storage.get("State", state_id)
-        if state:
-            return jsonify(state.to_dict())
-        abort(404)
+def get_state(state_id):
+    """Retrieves a State object in storage"""
+    state = storage.get("State", state_id)
+    if state:
+        return jsonify(state.to_dict())
+    abort(404)
 
 
 @app_views.route('/states/<state_id>', strict_slashes=False,
@@ -42,11 +39,12 @@ def delete_state(state_id):
                  methods=['POST'])
 def create_state():
     """Creates a State object in storage"""
-    # try:
-    data = request.get_json()
-    if not data:
+    try:
+        data = request.get_json()
+        if not data:
+            return "Not a JSON\n", 400
+    except BadRequest:
         return "Not a JSON\n", 400
-    # except BadRequest:
     if 'name' not in data.keys():
         return "Missing name\n", 400
     state = State(**data)
