@@ -53,12 +53,7 @@ def create_place(city_id):
         return "Not a JSON\n", 400
     if 'user_id' not in data.keys():
         return "Missing user_id\n", 400
-    id_present = False
-    for user in storage.all("User").values():
-        if data.user_id == user.id:
-            id_present = True
-            break
-    if not id_present:
+    if not storage.get("User", data['user_id']):
         abort(404)
     if 'name' not in data.keys():
         return "Missing name\n", 400
