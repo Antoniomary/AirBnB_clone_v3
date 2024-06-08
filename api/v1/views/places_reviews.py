@@ -3,8 +3,6 @@
 from api.v1.views import app_views
 from flask import jsonify, abort, request
 from models import storage
-from models.place import Place
-from models.user import User
 from models.review import Review
 
 
@@ -77,7 +75,8 @@ def update_review(review_id):
     except Exception:
         return "Not a JSON\n", 400
     for key, value in data.items():
-        if key not in ['id', 'user_id', 'place_id', 'created_at', 'updated_at']:
+        if key not in ['id', 'user_id',
+           'place_id', 'created_at', 'updated_at']:
             setattr(review, key, value)
     storage.save()
     return jsonify(review.to_dict())
