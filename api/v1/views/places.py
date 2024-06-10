@@ -95,7 +95,7 @@ def places_search():
     except Exception:
         return "Not a JSON\n", 400
     states = data.get("states")
-    cities = data.get("cities") 
+    cities = data.get("cities")
     amenities = data.get("amenities")
     if not data or (not states and not cities and not amenities):
         places = storage.get("Place")
