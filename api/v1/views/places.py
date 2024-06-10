@@ -108,14 +108,14 @@ def places_search():
                 for city in state.cities:
                     for place in city.places:
                         result.append(place)
-        result = set(result)
+        result = set(result[:])
     if cities_id:
         for city_id in cities_id:
             city = storage.get("City", city_id)
             if city:
                 for place in city.places:
                     result.append(place)
-        result = set(result)
+        result = set(result[:])
     if amenities_id:
         for place in result[:]:
             for amenity_id in amenities_id:
@@ -123,4 +123,5 @@ def places_search():
                 if amenity not in place.amenities:
                     result.remove(place)
                     break
+        result = set(result[:])
     return jsonify([place.to_dict() for place in result])
