@@ -7,7 +7,7 @@ from models.amenity import Amenity
 
 
 @app_views.route('/places/<place_id>/amenities', strict_slashes=False)
-def get_amenities(place_id):
+def get_place_amenities(place_id):
     """Retrieves the list of all Amenity objects of a Place"""
     place = storage.get("Place", place_id)
     if place:
@@ -18,7 +18,7 @@ def get_amenities(place_id):
 @app_views.route('/places/<place_id>/amenities/<amenity_id>',
                  strict_slashes=False,
                  methods=['DELETE'])
-def delete_amenity(place_id, amenity_id):
+def delete_place_amenity(place_id, amenity_id):
     """Deletes an Amenity object in storage"""
     place = storage.get("Place", place_id)
     if not place:
@@ -36,7 +36,7 @@ def delete_amenity(place_id, amenity_id):
 @app_views.route('/places/<place_id>/amenities/<amenity_id>',
                  strict_slashes=False,
                  methods=['POST'])
-def create_amenity(place_id, amenity_id):
+def create_place_amenity(place_id, amenity_id):
     """Creates an Amenity object in storage"""
     place = storage.get("Place", place_id)
     if not place:
