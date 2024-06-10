@@ -94,24 +94,32 @@ def places_search():
         data = request.get_json()
     except Exception:
         return "Not a JSON\n", 400
-    states = data.get("states")
-    cities = data.get("cities")
-    amenities = data.get("amenities")
-    if not data or (not states and not cities and not amenities):
+    states_id = data.get("states")
+    cities_id = data.get("cities")
+    amenities_id = data.get("amenities")
+    if not data or (not states_id and not cities_id and not amenities_id):
         places = storage.all("Place").values()
         return jsonify([place.to_dict() for place in places])
     result = []
-    if states:
-        for state in states:
-            result.append(state.cities.places)
+    if states_id:
+        for state_id in states_id:
+            state = storage.get("State", state_id)
+            if state:
+                for city in state.cities:
+                    for place in city.places:
+                        result.append(place)
         result = set(result)
-    if cities:
-        for city in cities:
-            result.append(city.places)
+    if cities_id:
+        for city_id in cities_id:
+            city = storage.get("City", city_id)
+            if city:
+                for place in city.places:
+                    result.append(place)
         result = set(result)
-    if amenities:
+    if amenities_id:
         for place in result[:]:
-            for amenity in amenities:
+            for amenity_id in amenities_id:
+                amenity = storage.get("Amenity", amenity_id)
                 if amenity not in place.amenities:
                     result.remove(place)
                     break
