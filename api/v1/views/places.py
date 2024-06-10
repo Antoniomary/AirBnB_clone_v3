@@ -98,7 +98,7 @@ def places_search():
     cities = data.get("cities")
     amenities = data.get("amenities")
     if not data or (not states and not cities and not amenities):
-        places = storage.get("Place")
+        places = storage.all("Place").values()
         return jsonify([place.to_json() for place in places])
     result = []
     if states:
