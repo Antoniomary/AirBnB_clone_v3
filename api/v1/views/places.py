@@ -90,6 +90,8 @@ def places_search():
       * cities   : list of City ids
       * amenities: list of Amenity ids
     """
+    if request.content_type != 'application/json':
+        return "Not a JSON\n", 400
     try:
         data = request.get_json()
     except Exception:
@@ -117,11 +119,17 @@ def places_search():
                     result.append(place)
         result = set(result[:])
     if amenities_id:
-        for place in result[:]:
+        if result:
+            for place in result[:]:
+                for amenity_id in amenities_id:
+                    amenity = storage.get("Amenity", amenity_id)
+                    if amenity not in place.amenities:
+                        result.remove(place)
+                        break
+        else:
             for amenity_id in amenities_id:
                 amenity = storage.get("Amenity", amenity_id)
-                if amenity not in place.amenities:
-                    result.remove(place)
-                    break
+                for place in amenity.place_amenities:
+                    result.append(place)
         result = set(result[:])
     return jsonify([place.to_dict() for place in result])
