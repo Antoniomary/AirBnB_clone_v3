@@ -135,5 +135,5 @@ def places_search():
                     for place in places:
                         if amenity in place.amenities:
                             result.append(place)
-        result = set(result)
+        result = set(result[:])
     return jsonify([place.to_dict() for place in result])
