@@ -127,9 +127,11 @@ def places_search():
                         result.remove(place)
                         break
         else:
+            places = storage.all("Place")
             for amenity_id in amenities_id:
                 amenity = storage.get("Amenity", amenity_id)
-                for place in amenity.place_amenities:
-                    result.append(place)
-        result = set(result[:])
+                for place in places:
+                    if amenity in place.amenities:
+                        result.append(place)
+        result = set(result)
     return jsonify([place.to_dict() for place in result])
