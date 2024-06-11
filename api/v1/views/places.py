@@ -129,11 +129,15 @@ def places_search():
                             break
         else:
             places = storage.all("Place").values()
-            for amenity_id in amenities_id:
-                amenity = storage.get("Amenity", amenity_id)
-                if amenity:
-                    for place in places:
-                        if amenity in place.amenities:
-                            result.append(place)
+            for place in places:
+                flag = False
+                for amenity_id in amenities_id:
+                    amenity = storage.get("Amenity", amenity_id)
+                    if amenity:
+                        if amenity not in place.amenities:
+                            flag = True
+                            break
+                if not flag:
+                    result.append(place)
         result = set(result[:])
     return jsonify([place.to_dict() for place in result])
