@@ -114,7 +114,7 @@ def places_search():
             city = storage.get("City", city_id)
             if city:
                 for place in city.places:
-                    result.append(place)
+                    places.append(place)
     places = list(set(places))
     if amenity_ids:
         for place in places:
