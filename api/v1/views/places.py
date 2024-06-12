@@ -113,7 +113,7 @@ def places_search():
             if city:
                 for place in city.places:
                     result.append(place)
-    result = list(set(result)
+    result = list(set(result))
     if amenity_ids:
         for place in result:
             if amenity not in place.amenities:
