@@ -93,9 +93,9 @@ def places_search():
     if not request.is_json:
         return "Not a JSON\n", 400
     data = request.get_json()
-    state_ids = data.get("states")
-    city_ids = data.get("cities")
-    amenity_ids = data.get("amenities")
+    state_ids = data.get("states", [])
+    city_ids = data.get("cities", [])
+    amenity_ids = data.get("amenities", [])
     if not data or (not state_ids and not city_ids and not amenity_ids):
         places = storage.all("Place").values()
         return jsonify([place.to_dict() for place in places])
