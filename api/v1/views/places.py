@@ -93,13 +93,13 @@ def places_search():
     if not request.is_json:
         abort(400, "Not a JSON")
     data = request.get_json()
-    states = data.get('states', [])
-    cities = data.get('cities', [])
-    amenities = data.get('amenities', [])
+    states = data.get('states')
+    cities = data.get('cities')
+    amenities = data.get('amenities')
 
     places = []
     all_places = storage.all("Place").values()
-    if data == {} or (states == cities == amenities == []):
+    if data == {} or (states == cities == amenities == None):
         return jsonify(list(map(lambda p: p.to_dict(), all_places)))
     if states:
         for state_id in states:
