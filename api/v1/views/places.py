@@ -117,8 +117,14 @@ def places_search():
                     places.append(place)
     places = list(set(places))
     if amenity_ids:
+        amenities = []
+        for amenity_id in amenity_ids:
+            amenity = storage.get("Amenity", amenity_id)
+            amenities.append(amenity)
         for place in places:
-            if amenity_ids not in place.amenities:
-                places.remove(place)
+            for amenity in amenities:
+                if amenity not in place.amenities:
+                    places.remove(place)
+                    break
 
     return jsonify([place.to_dict() for place in places])
