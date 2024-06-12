@@ -100,6 +100,7 @@ def places_search():
     if not data or (not state_ids and not city_ids and not amenity_ids):
         places = storage.all("Place").values()
         return jsonify([place.to_dict() for place in places])
+
     places = []
     if state_ids:
         for state_id in state_ids:
@@ -112,7 +113,8 @@ def places_search():
         for city_id in city_ids:
             city = storage.get("City", city_id)
             if city:
-                places.extend(city.places)
+                for place in city.places:
+                    result.append(place)
     places = list(set(places))
     if amenity_ids:
         for place in places:
