@@ -102,42 +102,39 @@ def places_search():
     if not data or (not states_id and not cities_id and not amenities_id):
         places = storage.all("Place").values()
         return jsonify([place.to_dict() for place in places])
-    result = []
+    result = set()
     if states_id:
         for state_id in states_id:
             state = storage.get("State", state_id)
             if state:
                 for city in state.cities:
                     for place in city.places:
-                        result.append(place)
-        result = set(result[:])
+                        result.add(place)
     if cities_id:
         for city_id in cities_id:
             city = storage.get("City", city_id)
             if city:
                 for place in city.places:
-                    result.append(place)
-        result = set(result[:])
+                    result.add(place)
     if amenities_id:
+        amenities = []
+        for amenity_id in amenities_id:
+            amenity = storage.get("Amenity", amenity_id)
+            if amenity:
+                amenities.append(amenity)
         if result:
-            for place in result[:]:
-                for amenity_id in amenities_id:
-                    amenity = storage.get("Amenity", amenity_id)
-                    if amenity:
-                        if amenity not in place.amenities:
-                            result.remove(place)
-                            break
+            for place in result.copy():
+                for amenity in amenities:
+                    if amenity not in place.amenities:
+                        result.discard(place)
+                        break
         else:
-            places = storage.all("Place").values()
-            for place in places:
+            for place in storage.all("Place").values():
                 flag = False
-                for amenity_id in amenities_id:
-                    amenity = storage.get("Amenity", amenity_id)
-                    if amenity:
-                        if amenity not in place.amenities:
-                            flag = True
-                            break
+                for amenity in amenities:
+                    if amenity not in place.amenities:
+                        flag = True
+                        break
                 if not flag:
-                    result.append(place)
-        result = set(result[:])
+                    result.add(place)
     return jsonify([place.to_dict() for place in result])
