@@ -91,33 +91,31 @@ def places_search():
       * amenities: list of Amenity ids
     """
     if not request.is_json:
-        abort(400, "Not a JSON")
+        return "Not a JSON\n", 400
     data = request.get_json()
-    states = data.get('states', [])
-    cities = data.get('cities', [])
-    amenities = data.get('amenities', [])
+    state_ids = data.get("states")
+    city_ids = data.get("cities")
+    amenity_ids = data.get("amenities")
+    if not data or (not state_ids and not city_ids and not amenity_ids):
+        places = storage.all("Place").values()
+        return jsonify([place.to_dict() for place in places])
+    result = set()
+    if state_ids:
+        for state_id in state_ids:
+            state = storage.get("State", state_id)
+            if state:
+                for city in state.cities:
+                    for place in city.places:
+                        result.add(place)
+    if city_ids:
+        for city_id in city_ids:
+            city = storage.get("City", city_id)
+            if city:
+                for place in city.places:
+                    result.add(place)
+    if amenity_ids:
+        for place in result.copy():
+            if amenity not in place.amenities:
+                result.remove(place)
 
-    places = []
-    all_cities = []
-    all_places = storage.all("Place").values()
-    if data == {} or (states == cities == amenities == []):
-        return jsonify(list(map(lambda p: p.to_dict(), all_places)))
-    else:
-        if states:
-            for state_id in states:
-                state = storage.get("State", state_id)
-                if state:
-                    for city in state.cities:
-                        places.extend(city.places)
-        if cities:
-            for city_id in cities:
-                city = storage.get("City", city_id)
-                if city:
-                    places.extend(city.places)
-    places = list(set(places))
-    if amenities:
-        for place in places:
-            if amenities not in place.amenities:
-                places.remove(place)
-
-    return jsonify(list(map(lambda p: p.to_dict(), places)))
+    return jsonify([place.to_dict() for place in result])
